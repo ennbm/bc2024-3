@@ -21,31 +21,29 @@ if (!options.input) {
 const inputPath = path.resolve(options.input);
 
 try {
-  
   if (!fs.existsSync(inputPath)) {
     console.error('Error: Cannot find input file');
     process.exit(1);
   }
 
-  
   const data = fs.readFileSync(inputPath, 'utf-8');
   const parsedData = JSON.parse(data);
 
-  
-  const result = JSON.stringify(parsedData, null, 2);
+  const newData = parsedData
+    .filter((item) => item.parent === 'BS3_BanksLiab')
+    .map((item) => `${item.txten}:${item.value}`);
 
-  
+  const newjsonStr = JSON.stringify(newData, null, 2);
+
   if (options.output) {
     const outputPath = path.resolve(options.output);
-    fs.writeFileSync(outputPath, result, 'utf-8');
+    fs.writeFileSync(outputPath, newjsonStr, 'utf-8');
     console.log(`Result has been saved to ${outputPath}`);
   }
 
-
   if (options.display) {
-    console.log('Result:', result);
+    console.log('Result:', newjsonStr);
   }
-
 
 } catch (err) {
   console.error('Error processing the file:', err.message);
